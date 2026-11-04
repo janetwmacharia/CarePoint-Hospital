@@ -1,0 +1,114 @@
+
+{% extends "base.html" %}
+
+{% block title %}DASHBOARD | CAREPOINT HOSPITAL{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- Dashboard Heading -->
+    <div class="mb-4">
+        <h2 class="fw-bold" style="color: #23428f;">
+            Hospital Dashboard
+        </h2>
+        <p class="text-muted">
+            Welcome to CarePoint Hospital Management System.
+            Here's your overview.
+        </p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="card-body">
+                    <div class="text-primary mb-2">
+                        <i class="fs-2">👥</i>
+                    </div>
+                    <p class="text-muted mb-1">Total Patients</p>
+                    <h3 class="fw-bold" style="color: #23428f;">—</h3>
+                    <small class="text-muted">Registered patients</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="card-body">
+                    <div class="mb-2 fs-2">📅</div>
+                    <p class="text-muted mb-1">Appointments</p>
+                    <h3 class="fw-bold text-success">—</h3>
+                    <small class="text-muted">Scheduled appointments</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="card-body">
+                    <div class="mb-2 fs-2">👨‍⚕️</div>
+                    <p class="text-muted mb-1">Doctors</p>
+                    <h3 class="fw-bold text-info">—</h3>
+                    <small class="text-muted">Medical professionals</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="card-body">
+                    <div class="mb-2 fs-2">⏳</div>
+                    <p class="text-muted mb-1">Pending</p>
+                    <h3 class="fw-bold text-warning">—</h3>
+                    <small class="text-muted">Awaiting confirmation</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Appointments -->
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0" style="color: #23428f;">
+                    Recent Appointments
+                </h5>
+
+                <a href="{% url 'booking' %}"
+                   class="btn btn-primary btn-sm">
+                    + New Appointment
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Department</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No appointment records available yet.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

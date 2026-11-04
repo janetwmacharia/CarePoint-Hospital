@@ -1,0 +1,92 @@
+
+{% extends "base.html" %}
+
+{% block title %}BOOK APPOINTMENT | CAREPOINT HOSPITAL{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold" style="color: #23428f;">
+            Book an Appointment
+        </h2>
+        <p class="text-muted">
+            Schedule your visit with our healthcare professionals.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name"
+                                class="form-control"
+                                placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="email"
+                                    class="form-control"
+                                    placeholder="Enter your email" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" name="phone"
+                                    class="form-control"
+                                    placeholder="Enter phone number" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Appointment Date</label>
+                                <input type="date" name="appointment_date"
+                                    class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Department</label>
+                                <select name="department" class="form-select" required>
+                                    <option value="">Choose Department</option>
+                                    <option>General Consultation</option>
+                                    <option>Paediatrics</option>
+                                    <option>Dental Care</option>
+                                    <option>Maternity</option>
+                                    <option>Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Reason for Appointment</label>
+                            <textarea name="reason" class="form-control"
+                                rows="3"
+                                placeholder="Briefly describe your reason for visiting"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="btn btn-primary btn-lg w-100">
+                            Book Appointment
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
