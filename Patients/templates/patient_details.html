@@ -1,0 +1,153 @@
+
+{% extends "base.html" %}
+
+{% block title %}Patient Details | CarePoint Hospital{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- Page Heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Patient Details</h2>
+            <p class="text-muted mb-0">
+                View patient information and appointment history.
+            </p>
+        </div>
+
+        <a href="{% url 'doctor_dashboard' %}"
+           class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Patient Information -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-person-circle me-2"></i>
+                Personal Information
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <p class="text-muted mb-1">Full Name</p>
+                    <h6>
+                        {{ patient.user.get_full_name|default:patient.user.username }}
+                    </h6>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="text-muted mb-1">Email Address</p>
+                    <h6>{{ patient.user.email|default:"Not provided" }}</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="text-muted mb-1">Phone Number</p>
+                    <h6>{{ patient.phone_number }}</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="text-muted mb-1">Date of Birth</p>
+                    <h6>{{ patient.date_of_birth|date:"d M Y" }}</h6>
+                </div>
+
+                <div class="col-12">
+                    <p class="text-muted mb-1">Residential Address</p>
+                    <h6>{{ patient.address }}</h6>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="text-muted mb-1">Patient Since</p>
+                    <h6>{{ patient.created_at|date:"d M Y" }}</h6>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Appointment History -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-calendar-check me-2"></i>
+                Appointment History
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Department</th>
+                            <th>Appointment Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for appointment in appointments %}
+
+                        <tr>
+                            <td>{{ appointment.doctor.department.name }}</td>
+
+                            <td>
+                                {{ appointment.appointment_date|date:"d M Y, h:i A" }}
+                            </td>
+
+                            <td>
+                                {{ appointment.reason|default:"Not specified" }}
+                            </td>
+
+                            <td>
+                                {% if appointment.status == 'Pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif appointment.status == 'Confirmed' %}
+                                    <span class="badge bg-success">Confirmed</span>
+                                {% elif appointment.status == 'Rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% elif appointment.status == 'Cancelled' %}
+                                    <span class="badge bg-secondary">Cancelled</span>
+                                {% else %}
+                                    <span class="badge bg-info text-dark">Completed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No appointment history available.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

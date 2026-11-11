@@ -1,0 +1,247 @@
+
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard | CarePoint Hospital{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container py-5">
+
+<a href="{% url 'doctor_profile' %}" class="btn btn-outline-primary">
+    <i class="bi bi-person-circle me-2"></i>
+    My Profile
+</a>
+
+    <!-- Welcome Section -->
+    <div class="mb-4">
+        <h2 class="fw-bold">
+            Welcome, Dr. {{ doctor.user.last_name }}!
+        </h2>
+        <p class="text-muted">
+            {{ doctor.department.name }} Department
+        </p>
+        <p>Here is an overview of your appointments and patients.</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4 col-lg">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Appointments</h6>
+                    <h2 class="fw-bold text-primary">
+                        {{ total_appointments }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Pending</h6>
+                    <h2 class="fw-bold text-warning">
+                        {{ pending_appointments }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Confirmed</h6>
+                    <h2 class="fw-bold text-success">
+                        {{ confirmed_appointments }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">Completed</h6>
+                    <h2 class="fw-bold text-info">
+                        {{ completed_appointments }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">My Patients</h6>
+                    <h2 class="fw-bold text-dark">
+                        {{ total_patients }}
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    
+<!-- Appointments Table -->
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-primary text-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-calendar-check me-2"></i>
+            My Appointments
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+<!-- Appointment Status Filters -->
+<div class="d-flex flex-wrap gap-2 mb-3">
+
+    <a href="{% url 'doctor_dashboard' %}"
+       class="btn btn-sm {% if status_filter == 'All' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+        All Appointments
+    </a>
+
+    {% for status in status_choices %}
+        <a href="{% url 'doctor_dashboard' %}?status={{ status }}"
+           class="btn btn-sm {% if status_filter == status %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            {{ status }}
+        </a>
+    {% endfor %}
+
+</div>
+
+{% if appointments %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Patient</th>
+                        <th>Phone Number</th>
+                        <th>Appointment Date</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for appointment in appointments %}
+
+                    <tr>
+                        <td>
+                            {{ appointment.patient.user.get_full_name|default:appointment.patient.user.username }}
+                        </td>
+
+                        <td>
+                            {{ appointment.patient.phone_number }}
+                        </td>
+
+                        <td>
+                            {{ appointment.appointment_date|date:"d M Y, h:i A" }}
+                        </td>
+
+                        <td>
+                            {{ appointment.reason|default:"Not specified" }}
+                        </td>
+
+                        <td>
+                            {% if appointment.status == 'Pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif appointment.status == 'Confirmed' %}
+                                <span class="badge bg-success">Confirmed</span>
+                            {% elif appointment.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% elif appointment.status == 'Cancelled' %}
+                                <span class="badge bg-secondary">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-info text-dark">Completed</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'patient_details' appointment.patient.id %}"
+   class="btn btn-sm btn-outline-primary mb-1">
+    <i class="bi bi-person-lines-fill me-1"></i>
+    View Patient
+</a>
+                            {% if appointment.status == 'Pending' %}
+
+                                <form method="POST" action="{% url 'manage_appointment' appointment.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <button type="submit" class="btn btn-sm btn-success mb-1">
+                                        Confirm
+                                    </button>
+                                </form>
+
+                                <form method="POST" action="{% url 'manage_appointment' appointment.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="Rejected">
+                                    <button type="submit" class="btn btn-sm btn-danger mb-1">
+                                        Reject
+                                    </button>
+                                </form>
+
+                            {% elif appointment.status == 'Confirmed' %}
+
+                                <form method="POST" action="{% url 'manage_appointment' appointment.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="Completed">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        Mark Completed
+                                    </button>
+                                </form>
+
+                            {% else %}
+                                <span class="text-muted small">No actions available</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+            </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x display-4 text-muted"></i>
+                    <h5 class="mt-3">No Appointments Yet</h5>
+                    <p class="text-muted">
+                        You currently have no appointments assigned to you.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

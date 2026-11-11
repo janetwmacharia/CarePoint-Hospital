@@ -1,66 +1,187 @@
 
 {% extends "base.html" %}
 
-{% block title %}MY PROFILE | CAREPOINT HOSPITAL{% endblock %}
+{% load static %}
+
+{% block title %}My Profile | CarePoint Hospital{% endblock %}
 
 {% block content %}
 
-<div class="container py-5">
 
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">My Profile</h2>
-        <p class="text-muted">Manage your personal information</p>
-    </div>
-
-    <div class="card border-0 shadow-sm mx-auto"
-         style="max-width: 650px; border-radius: 15px;">
-
-        <div class="card-body p-4">
-
-            <div class="text-center mb-4">
-                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center"
-                     style="width: 85px; height: 85px; font-size: 32px;">
-                    👤
-                </div>
-                <h4 class="mt-3 fw-bold">Patient Profile</h4>
-                <p class="text-muted">Personal Details</p>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Full Name</label>
-                <input type="text" class="form-control"
-                       placeholder="Enter your full name">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Email Address</label>
-                <input type="email" class="form-control"
-                       placeholder="Enter your email">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Phone Number</label>
-                <input type="tel" class="form-control"
-                       placeholder="Enter your phone number">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Date of Birth</label>
-                <input type="date" class="form-control">
-            </div>
-
-            <div class="mb-4">
-                <label class="form-label fw-semibold">Address</label>
-                <textarea class="form-control" rows="3"
-                          placeholder="Enter your address"></textarea>
-            </div>
-
-            <button class="btn btn-primary w-100 py-2">
-                Save Profile
-            </button>
-
+<!-- PROFILE HERO BANNER -->
+<div class="container-fluid px-0 mb-4">
+    <div class="profile-banner text-white d-flex align-items-center">
+        <div class="container py-5">
+            <h1 class="display-5 fw-bold">My Profile</h1>
+            <p class="fs-5 mb-0">
+                Manage your personal information and keep your details up to date.
+            </p>
         </div>
     </div>
 </div>
+
+<div class="container-fluid py-4">
+    <div class="row g-4">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="col-lg-4 col-xl-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center p-4">
+
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                         style="width: 90px; height: 90px; font-size: 30px; font-weight: bold;">
+                        {{ user.first_name|first }}{{ user.last_name|first }}
+                    </div>
+
+                    <h4 class="fw-bold mb-1">
+                        {{ user.get_full_name|default:user.username }}
+                    </h4>
+
+                    <p class="text-muted mb-3">Patient Account</p>
+
+                    <hr>
+
+                    <div class="text-start">
+                        <p class="text-muted small mb-1">USERNAME</p>
+                        <p class="fw-semibold">{{ user.username }}</p>
+
+                        <p class="text-muted small mb-1">EMAIL ADDRESS</p>
+                        <p class="fw-semibold">{{ user.email }}</p>
+
+                        <p class="text-muted small mb-1">MEMBER SINCE</p>
+                        <p class="fw-semibold">{{ user.date_joined|date:"d M Y" }}</p>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+
+                        <a href="{% url 'booking' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-calendar-plus me-2"></i> Book Appointment
+                        </a>
+
+                        <a href="{% url 'profile' %}" class="btn btn-primary">
+                            <i class="bi bi-person me-2"></i> My Profile
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PROFILE FORM -->
+        <div class="col-lg-8 col-xl-9">
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-gear me-2"></i>
+                        Personal Information
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <p class="text-muted mb-4">
+                        View and update your personal details below.
+                    </p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">First Name</label>
+                                {{ form.first_name }}
+                                {{ form.first_name.errors }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Last Name</label>
+                                {{ form.last_name }}
+                                {{ form.last_name.errors }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address</label>
+                                {{ form.email }}
+                                {{ form.email.errors }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                {{ form.phone_number }}
+                                {{ form.phone_number.errors }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Date of Birth</label>
+                                {{ form.date_of_birth }}
+                                {{ form.date_of_birth.errors }}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Residential Address</label>
+                                {{ form.address }}
+                                {{ form.address.errors }}
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'dashboard' %}" class="btn btn-light">
+                                Cancel
+                            </a>
+
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-2"></i>
+                                Save Changes
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.profile-banner {
+    min-height: 260px;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 45, 90, 1) 0%,
+            rgba(0, 45, 90, 0.98) 38%,
+            rgba(0, 45, 90, 0.25) 75%
+        ),
+        url("{% static 'images/profile-banner.png' %}");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+</style>
 
 {% endblock %}

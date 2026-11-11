@@ -22,65 +22,82 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4 p-md-5">
 
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if not doctors %}
+                        <div class="alert alert-warning">
+                            No doctors are currently available for booking.
+                            Please contact the hospital.
+                        </div>
+                    {% else %}
+
                     <form method="POST">
                         {% csrf_token %}
 
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" name="full_name"
-                                class="form-control"
-                                placeholder="Enter your full name" required>
+                            <label class="form-label">Patient Name</label>
+                            <input type="text"
+                                   class="form-control"
+                                   value="{{ request.user.get_full_name|default:request.user.username }}"
+                                   readonly>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" name="email"
-                                    class="form-control"
-                                    placeholder="Enter your email" required>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Choose Doctor</label>
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" name="phone"
-                                    class="form-control"
-                                    placeholder="Enter phone number" required>
-                            </div>
+                            <select name="doctor"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Select a Doctor</option>
+
+                                {% for doctor in doctors %}
+                                    <option value="{{ doctor.id }}">
+                                        Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}
+                                        - {{ doctor.department.name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Appointment Date</label>
-                                <input type="date" name="appointment_date"
-                                    class="form-control" required>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Appointment Date and Time
+                            </label>
 
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Department</label>
-                                <select name="department" class="form-select" required>
-                                    <option value="">Choose Department</option>
-                                    <option>General Consultation</option>
-                                    <option>Paediatrics</option>
-                                    <option>Dental Care</option>
-                                    <option>Maternity</option>
-                                    <option>Emergency</option>
-                                </select>
-                            </div>
+                            <input type="datetime-local"
+                                   name="appointment_date"
+                                   class="form-control"
+                                   min="{{ min_datetime }}"
+                                   required>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Reason for Appointment</label>
-                            <textarea name="reason" class="form-control"
-                                rows="3"
-                                placeholder="Briefly describe your reason for visiting"></textarea>
+                            <label class="form-label">
+                                Reason for Appointment
+                            </label>
+
+                            <textarea name="reason"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Briefly describe your reason for visiting"></textarea>
                         </div>
 
                         <button type="submit"
-                            class="btn btn-primary btn-lg w-100">
+                                class="btn btn-primary btn-lg w-100">
                             Book Appointment
                         </button>
 
                     </form>
+
+                    {% endif %}
 
                 </div>
             </div>

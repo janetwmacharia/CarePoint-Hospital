@@ -1,0 +1,73 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Doctor Profile | CarePoint Hospital{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Doctor Profile</h2>
+            <p class="text-muted">Your professional information</p>
+        </div>
+
+        <a href="{% url 'doctor_dashboard' %}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <div class="text-center mb-4">
+                <i class="bi bi-person-circle text-primary" style="font-size: 70px;"></i>
+                <h3 class="mt-2">
+                    Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}
+                </h3>
+                <p class="text-muted">{{ doctor.department.name }}</p>
+            </div>
+
+            <hr>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <strong>Full Name</strong>
+                    <p>{{ doctor.user.get_full_name|default:doctor.user.username }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Email Address</strong>
+                    <p>{{ doctor.user.email }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Phone Number</strong>
+                    <p>{{ doctor.phone_number }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Department</strong>
+                    <p>{{ doctor.department.name }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Qualifications</strong>
+                    <p>{{ doctor.qualification }}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Consultation Fee</strong>
+                    <p>KSh {{ doctor.consultation_fee|floatformat:2 }}</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
