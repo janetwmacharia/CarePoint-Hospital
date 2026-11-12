@@ -7,9 +7,32 @@ from .forms import DoctorCreationForm, DoctorUpdateForm
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'phone_number', 'date_of_birth', 'created_at')
-    search_fields = ('user__username', 'user__email', 'phone_number')
+
+    list_display = (
+        'id',
+        'get_full_name',
+        'user',
+        'phone_number',
+        'date_of_birth',
+        'created_at',
+    )
+
+    list_display_links = ('get_full_name',)
+
+    search_fields = (
+        'user__username',
+        'user__email',
+        'user__first_name',
+        'user__last_name',
+        'phone_number',
+    )
+
     list_filter = ('created_at',)
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name() or obj.user.username
+
+    get_full_name.short_description = 'Full Name'
 
 
 @admin.register(Department)

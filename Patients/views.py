@@ -262,7 +262,6 @@ def patient_details(request, patient_id):
         'appointments': appointments,
     })
 
-
 @login_required
 def doctor_profile(request):
 
