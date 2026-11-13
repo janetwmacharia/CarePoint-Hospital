@@ -1,0 +1,57 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Patient List | CarePoint Hospital{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <h2>Patient Management</h2>
+    <p class="text-muted">View registered patients.</p>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Patient ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Date of Birth</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for patient in patients %}
+                    <tr>
+                        <td>{{ patient.id }}</td>
+                        <td>{{ patient.full_name }}</td>
+                        <td>{{ patient.email }}</td>
+                        <td>{{ patient.phone_number }}</td>
+                        <td>{{ patient.date_of_birth }}</td>
+                        <td>{{ patient.address }}</td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            No patients registered yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

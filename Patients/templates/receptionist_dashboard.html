@@ -1,0 +1,170 @@
+
+{% extends "base.html" %}
+
+{% block title %}Receptionist Dashboard | CarePoint Hospital{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <!-- Welcome Section -->
+    <div class="mb-4">
+        <h2 class="fw-bold">
+            Welcome, {{ request.user.first_name|default:request.user.username }}!
+        </h2>
+
+        <p class="text-muted">
+            Reception Desk | CarePoint Hospital
+        </p>
+
+        <p>
+            Manage patient registration, appointments and hospital check-ins.
+        </p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Registered Patients</h6>
+                            <h2 class="fw-bold text-primary">
+                                {{ total_patients }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-people display-5 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Today's Appointments</h6>
+                            <h2 class="fw-bold text-success">
+                                {{ todays_appointments }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-calendar-check display-5 text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted">Patients Waiting</h6>
+                            <h2 class="fw-bold text-warning">
+                                {{ waiting_patients }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-person-lines-fill display-5 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Reception Desk -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-hospital me-2"></i>
+                Reception Desk
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <p class="text-muted">
+                Use the reception desk to manage patients arriving
+                at the hospital and their appointments.
+            </p>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <i class="bi bi-person-plus display-6 text-primary"></i>
+
+                        <h5 class="mt-3">Patient Registration</h5>
+
+                        <p class="text-muted mb-0">
+                            Register new patients or search for existing
+                            patient profiles to avoid duplicate accounts.
+                        </p>
+                        <a href="{% url 'receptionist_patient_search' %}"
+   class="btn btn-sm btn-primary mt-3">
+    Search Patients
+</a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <i class="bi bi-calendar2-check display-6 text-success"></i>
+
+                        <h5 class="mt-3">Appointment Check-in</h5>
+
+                        <p class="text-muted mb-0">
+                            Find confirmed appointments and check patients
+                            in when they arrive at the hospital.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <i class="bi bi-person-walking display-6 text-warning"></i>
+
+                        <h5 class="mt-3">Walk-in Patients</h5>
+
+                        <p class="text-muted mb-0">
+                            Register or locate patients arriving without
+                            a prior appointment.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <i class="bi bi-person-badge display-6 text-info"></i>
+
+                        <h5 class="mt-3">Doctor Assignment</h5>
+
+                        <p class="text-muted mb-0">
+                            Select a department, review available doctors
+                            and assign patients for consultation.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Information Notice -->
+    <div class="alert alert-info border-0">
+        <i class="bi bi-info-circle me-2"></i>
+        Patient check-in, walk-in registration and doctor assignment
+        will be available here as we complete the reception workflows.
+    </div>
+
+</div>
+
+{% endblock %}

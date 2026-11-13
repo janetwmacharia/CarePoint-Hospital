@@ -272,3 +272,82 @@ class DoctorUpdateForm(forms.ModelForm):
 
         return doctor
 
+
+class ReceptionistPatientRegistrationForm(forms.ModelForm):
+
+    username = forms.CharField(max_length=150)
+    first_name = forms.CharField(max_length=150)
+    last_name = forms.CharField(max_length=150)
+    email = forms.EmailField(required=False)
+
+    class Meta:
+        model = Patient
+        fields = [
+            'phone_number',
+            'date_of_birth',
+            'address',
+        ]
+
+        widgets = {
+            'date_of_birth': forms.DateInput(
+                attrs={'type': 'date'}
+            ),
+            'address': forms.Textarea(
+                attrs={'rows': 3}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.order_fields([
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'phone_number',
+            'date_of_birth',
+            'address',
+        ])
+
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError(
+                "This username is already taken."
+            )
+
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                "This email is already registered."
+            )
+
+        return email
+
+    def save(self, commit=True):
+        patient = super().save(commit=False)
+
+        user = User(
+            username=self.cleaned_data['username'],
+            first_name=self.cleaned_data['first_name'],
+            last_name=self.cleaned_data['last_name'],
+            email=self.cleaned_data.get('email', ''),
+        )
+
+        user.set_unusable_password()
+
+        if commit:
+            user.save()
+            patient.user = user
+            patient.save()
+
+        return patient

@@ -94,6 +94,111 @@
 
     </div>
 
+
+<!-- Patient Waiting List -->
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-success text-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-people me-2"></i>
+            Patient Waiting List
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        {% if waiting_visits %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Patient Name</th>
+                        <th>Phone Number</th>
+                        <th>Visit Type</th>
+                        <th>Visit Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for visit in waiting_visits %}
+
+                    <tr>
+                        <td>
+                            {{ visit.patient.user.get_full_name|default:visit.patient.user.username }}
+                        </td>
+
+                        <td>
+                            {{ visit.patient.phone_number }}
+                        </td>
+
+                        <td>
+                            {{ visit.get_visit_type_display }}
+                        </td>
+
+                        <td>
+                            {{ visit.visit_date|date:"d M Y, h:i A" }}
+                        </td>
+
+                        <td>
+                            {% if visit.status == 'Waiting' %}
+                                <span class="badge bg-warning text-dark">
+                                    Waiting
+                                </span>
+                            {% else %}
+                                <span class="badge bg-primary">
+                                    In Consultation
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'patient_details' visit.patient.id %}"
+                               class="btn btn-sm btn-outline-primary">
+                                View Patient
+                            </a>
+
+                            <a href="{% url 'update_patient' visit.patient.id visit.id %}"
+                               class="btn btn-sm btn-success">
+                                {% if visit.status == 'Waiting' %}
+                                    Start Consultation
+                                {% else %}
+                                    Continue Consultation
+                                {% endif %}
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-4">
+            <i class="bi bi-person-check display-4 text-muted"></i>
+
+            <h5 class="mt-3">No Patients Waiting</h5>
+
+            <p class="text-muted mb-0">
+                Patients will appear here after they have checked in
+                and been assigned to you.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
     
 <!-- Appointments Table -->
 <div class="card shadow-sm border-0">
@@ -123,6 +228,7 @@
     {% endfor %}
 
 </div>
+
 
 {% if appointments %}
 
@@ -199,17 +305,11 @@
                                         Reject
                                     </button>
                                 </form>
+{% elif appointment.status == 'Confirmed' %}
 
-                            {% elif appointment.status == 'Confirmed' %}
-
-                                <form method="POST" action="{% url 'manage_appointment' appointment.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="Completed">
-                                    <button type="submit" class="btn btn-sm btn-primary">
-                                        Mark Completed
-                                    </button>
-                                </form>
-
+    <span class="text-muted small">
+        Awaiting patient check-in
+    </span>
                             {% else %}
                                 <span class="text-muted small">No actions available</span>
                             {% endif %}

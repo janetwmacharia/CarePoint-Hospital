@@ -16,8 +16,7 @@
             </p>
         </div>
 
-        
-<div class="d-flex gap-2">
+<div class="d-flex gap-2 flex-wrap">
 
     <a href="{% url 'doctor_dashboard' %}"
        class="btn btn-outline-primary">
@@ -25,6 +24,26 @@
         Back to Dashboard
     </a>
 
+    {% if patient.is_active %}
+    <form method="POST"
+          action="{% url 'archive_patient' patient.id %}"
+          onsubmit="return confirm('Are you sure you want to archive this patient? Their medical history will be preserved.');">
+
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-archive me-2"></i>
+            Archive Patient
+        </button>
+
+    </form>
+    {% else %}
+        <span class="badge bg-secondary align-self-center">
+            Archived Patient
+        </span>
+    {% endif %}
+
+</div>
 </div>
 
     </div>
@@ -150,6 +169,189 @@
                 </table>
 
             </div>
+
+        </div>
+    </div>
+
+    <!-- Patient Visits -->
+<div class="card border-0 shadow-sm mt-4">
+
+    <div class="card-header bg-primary text-white py-3">
+        <h5 class="mb-0">
+            <i class="bi bi-clipboard2-pulse me-2"></i>
+            Patient Visits
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Visit Date</th>
+                        <th>Visit Type</th>
+                        <th>Appointment</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for visit in visits %}
+
+                    <tr>
+
+                        <td>
+                            {{ visit.visit_date|date:"d M Y, h:i A" }}
+                        </td>
+
+                        <td>
+                            {{ visit.get_visit_type_display }}
+                        </td>
+
+                        <td>
+                            {% if visit.appointment %}
+                                {{ visit.appointment.appointment_date|date:"d M Y, h:i A" }}
+                            {% else %}
+                                <span class="text-muted">Walk-in</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if visit.status == 'Waiting' %}
+                                <span class="badge bg-warning text-dark">
+                                    Waiting
+                                </span>
+
+                            {% elif visit.status == 'In Consultation' %}
+                                <span class="badge bg-primary">
+                                    In Consultation
+                                </span>
+
+                            {% elif visit.status == 'Completed' %}
+                                <span class="badge bg-success">
+                                    Completed
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ visit.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            {% if patient.is_active %}
+
+                                {% if visit.status == 'Waiting' %}
+                                    <a href="{% url 'update_patient' patient.id visit.id %}"
+                                       class="btn btn-sm btn-primary">
+                                        Start Consultation
+                                    </a>
+
+                                {% elif visit.status == 'In Consultation' %}
+                                    <a href="{% url 'update_patient' patient.id visit.id %}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Continue Consultation
+                                    </a>
+
+                                {% else %}
+                                    <span class="text-muted">No action</span>
+                                {% endif %}
+
+                            {% else %}
+                                <span class="text-muted">Patient archived</span>
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="5"
+                            class="text-center text-muted py-4">
+                            No patient visits available.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+    <!-- Medical Records History -->
+    <div class="card border-0 shadow-sm mt-4">
+
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-file-medical me-2"></i>
+                Medical Records History
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            {% for record in medical_records %}
+
+            <div class="border rounded p-3 mb-3">
+
+                <div class="d-flex justify-content-between flex-wrap mb-3">
+                    <h6 class="fw-bold mb-1">
+                        Consultation: {{ record.created_at|date:"d M Y, h:i A" }}
+                    </h6>
+
+                    <span class="text-muted">
+                        Dr. {{ record.doctor.user.get_full_name|default:record.doctor.user.username }}
+                    </span>
+                </div>
+
+                <p>
+                    <strong>Diagnosis:</strong><br>
+                    {{ record.diagnosis }}
+                </p>
+
+                <p>
+                    <strong>Treatment:</strong><br>
+                    {{ record.treatment|default:"Not specified" }}
+                </p>
+
+                <p>
+                    <strong>Prescription:</strong><br>
+                    {{ record.prescription|default:"Not specified" }}
+                </p>
+
+                <p>
+                    <strong>Doctor's Notes:</strong><br>
+                    {{ record.doctors_notes|default:"No notes available" }}
+                </p>
+
+                <p class="mb-0">
+                    <strong>Follow-up Date:</strong>
+                    {{ record.follow_up_date|date:"d M Y"|default:"Not scheduled" }}
+                </p>
+
+            </div>
+
+            {% empty %}
+
+            <p class="text-center text-muted py-4 mb-0">
+                No medical records available for this patient yet.
+            </p>
+
+            {% endfor %}
 
         </div>
     </div>

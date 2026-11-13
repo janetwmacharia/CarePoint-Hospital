@@ -1,0 +1,95 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Update Patient Record | CarePoint Hospital{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="mb-4">
+        <h2>Update Patient Medical Record</h2>
+        <p class="text-muted">
+            Enter and update the patient's medical information.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            Patient Information
+        </div>
+
+        <div class="card-body">
+
+            <p><strong>Patient ID:</strong> {{ patient.id }}</p>
+
+            <p>
+                <strong>Patient Name:</strong>
+                {{ patient.user.get_full_name|default:patient.user.username }}
+            </p>
+
+            <p><strong>Email:</strong> {{ patient.user.email }}</p>
+
+            <p><strong>Phone:</strong> {{ patient.phone_number }}</p>
+
+            <hr>
+
+            <h5 class="mb-3">Medical Information</h5>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Diagnosis</label>
+                    <textarea name="diagnosis"
+                        class="form-control"
+                        rows="3"
+                        required>{{ record.diagnosis|default:'' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Treatment</label>
+                    <textarea name="treatment"
+                        class="form-control"
+                        rows="3">{{ record.treatment|default:'' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Prescription</label>
+                    <textarea name="prescription"
+                        class="form-control"
+                        rows="3">{{ record.prescription|default:'' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Doctor's Notes</label>
+                    <textarea name="doctors_notes"
+                        class="form-control"
+                        rows="3">{{ record.doctors_notes|default:'' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Follow-up Date</label>
+                    <input type="date"
+                        name="follow_up_date"
+                        class="form-control"
+                        value="{{ record.follow_up_date|date:'Y-m-d' }}">
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Save Medical Record
+                </button>
+
+                <a href="{% url 'doctor_dashboard' %}"
+                    class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

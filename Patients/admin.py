@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from .models import Patient, Department, Doctor, Appointment
 from .forms import DoctorCreationForm, DoctorUpdateForm
+from .models import Patient, Department, Doctor, Appointment, PatientVisit
 
 
 @admin.register(Patient)
@@ -146,3 +147,24 @@ class AppointmentAdmin(admin.ModelAdmin):
     list_editable = ('status',)
 
     ordering = ('-appointment_date',)
+
+@admin.register(PatientVisit)
+class PatientVisitAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'patient',
+        'doctor',
+        'visit_type',
+        'status',
+        'visit_date',
+        'created_by',
+    )
+
+    list_filter = ('visit_type', 'status', 'visit_date')
+
+    search_fields = (
+        'patient__user__first_name',
+        'patient__user__last_name',
+        'doctor__user__first_name',
+        'doctor__user__last_name',
+    )
